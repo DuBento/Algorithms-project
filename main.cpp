@@ -63,11 +63,11 @@ public:
     }
     
     // For debug
-    friend ostream& operator<<(ostream &stream, const Vertex &v) {
+    /* friend ostream& operator<<(ostream &stream, const Vertex &v) {
         stream << "IDX:" << v.getIndex() << "\n";
         stream << "Value:" << v.getValue() << "\n";
         return stream;
-    }
+    } */
 };
 
 class Graph {
@@ -138,7 +138,6 @@ void readInputVertice(Graph* G) {
     //Fill in the already created list of size nVertice
     int value;
     for (int i = 0; i < G->getNVertice(); i++) {
-        cout << "antes\n";
         scanf("%d", &value);
         // Vertex* v = G->getVertex(i);
         G->setVertex(new Vertex(i, value), i);
@@ -159,8 +158,7 @@ void readInputEdges(Graph* G) {
         v->setNext(G->getVertex(from)->getNext());
         G->getVertex(from)->setNext(v);
 
-/*         cout << "LOOP: " << i << "\n";
- */    }
+    }
 }
 
 void readSize(Graph* G) {
@@ -168,8 +166,7 @@ void readSize(Graph* G) {
     scanf("%d, %d", &nVertice, &nEdges);
     G->setNVertices(nVertice);
     G->setNEdges(nEdges);
-/*     cout << G->getNEdges() << " ;DEBUG; " << G->getNVertice() << "\n";
- */}
+}
 
 int visit(Graph* G, Vertex* v) {
 /*     cout << "DEBUG visit\n";
@@ -183,7 +180,6 @@ int visit(Graph* G, Vertex* v) {
     Vertex* vPrev = v;
     Vertex* vv;
     while ((vv = vPrev->getNext()) != NULL){
-        getchar();
         value = visit(G, G->getVertex(vv->getIndex()));
         if (value > v->getValue()) {
             v->setValue(value);
