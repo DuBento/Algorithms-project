@@ -10,9 +10,9 @@ using namespace std;
 class Graph;
 class Vertex;
 
-void readInputVertice(Vertex**, int);
-void readInputEdges(Vertex**, int);
-void readSize(int*, int*);
+void readInputVertice(Graph*);
+void readInputEdges(Graph*);
+void readSize(Graph*);
 int visit(Graph*, Vertex*);
 void solve(Graph*);
 
@@ -24,27 +24,27 @@ private:
     Vertex* _next = NULL;
     
 public:
-    Vertex(){}
+    Vertex() : _idx(0), _value(0) {}
     Vertex(int idx, int value) : _idx(idx), _value(value) {}
-    Vertex(Vertex* v) : Vertex(v->getIdx(), v->getValue()) {}
+    Vertex(const Vertex* v) : Vertex(v->getIndex(), v->getValue()) {}
 
-    int getIndex() {
+    int getIndex() const {
         return _idx;
     }
 
-    int isVisited() {
+    int isVisited() const {
         return _visited;
     }
 
-    int getValue() {
+    void setVisited() {
+        _visited = VISITED;
+    }
+
+    int getValue() const {
         return _value;
     }
 
     void setValue(int v) { _value = v; }
-
-    int getIdx() {
-        return _idx;
-    }
 
     void setIdx(int idx) {
         _idx = idx;
@@ -61,6 +61,13 @@ public:
     void setNext(Vertex* v) {
         _next = v;
     }
+    
+    // For debug
+    friend ostream& operator<<(ostream &stream, const Vertex &v) {
+        stream << "IDX:" << v.getIndex() << "\n";
+        stream << "Value:" << v.getValue() << "\n";
+        return stream;
+    }
 };
 
 class Graph {
@@ -71,23 +78,36 @@ private:
 public:
     Graph() {
         // read number of edges and vertice from input
-        readSize(&_nVertice, &_nEdges);
+        readSize(this);
         // creates the list of Vertex*
         _vertice = new Vertex*[_nVertice];
-        readInputVertice(_vertice, _nVertice);
-        readInputEdges(_vertice, _nEdges);
+        readInputVertice(this);
+        readInputEdges(this);
     }
+
     
     Vertex** getVertice() const {
         return _vertice;
     }
 
     Vertex* getVertex(int idx) const {
+        // DEBUG
+        cout  << *_vertice[idx];
         return _vertice[idx];
     }
 
+    void setVertex(Vertex *v, int idx) {
+        _vertice[idx] = v;
+    }
+
     int getNVertice() const { return _nVertice; }
+
+    void setNVertices(int val) { _nVertice = val; }
+
+    int getNEdges() const { return _nEdges; }
     
+    void setNEdges(int val) { _nEdges = val; }
+
     Vertex** getChildren(Vertex* vertex) {
         Vertex* vPrev = vertex;
         Vertex* v;
@@ -106,6 +126,7 @@ public:
         }
         return stream;
     }
+
     ~Graph(){
         // TODO
     }
@@ -113,55 +134,70 @@ public:
 
 
 
-void readInputVertice(Vertex** vertice, int nVertice) {
+void readInputVertice(Graph* G) {
     //Fill in the already created list of size nVertice
     int value;
-    for (int i = 0; i < nVertice; i++) {
+    for (int i = 0; i < G->getNVertice(); i++) {
         cout << "antes\n";
         scanf("%d", &value);
-        cout << "Depois\n";
-        Vertex* v = vertice[i];
-        v->setValue(value);
-        v->setIdx(i);
+        // Vertex* v = G->getVertex(i);
+        G->setVertex(new Vertex(i, value), i);
+        // cout << "INPUTED:\t" << G->getVertex(i)->getValue() << "\n";
+        // G->getVertex(i)->setValue(value);
+        // G->getVertex(i)->setIdx(i);
     }
 }
 
-void readInputEdges(Vertex** vertice, int nEdges) {
+void readInputEdges(Graph* G) {
     //Introducing vertice in the linked list
     int from, to;
-    for (int i = 0; i < nEdges; i++) {
+    for (int i = 0; i < G->getNEdges(); i++) {
         scanf("%d, %d", &from, &to);
-        Vertex* v = new Vertex(vertice[to]);
-        v->setNext(vertice[from]->getNext());
-        vertice[from]->setNext(v);
-    }
+        from--; 
+        to--;
+        Vertex* v = new Vertex(G->getVertex(to));
+        v->setNext(G->getVertex(from)->getNext());
+        G->getVertex(from)->setNext(v);
+
+/*         cout << "LOOP: " << i << "\n";
+ */    }
 }
 
-void readSize(int *numvertice, int *numEdges) {
-    scanf("%d, %d", numvertice, numEdges);
-    cout << *numvertice << " ;DEBUG; " << *numEdges << "\n";
-}
+void readSize(Graph* G) {
+    int nVertice, nEdges;
+    scanf("%d, %d", &nVertice, &nEdges);
+    G->setNVertices(nVertice);
+    G->setNEdges(nEdges);
+/*     cout << G->getNEdges() << " ;DEBUG; " << G->getNVertice() << "\n";
+ */}
 
 int visit(Graph* G, Vertex* v) {
-    if (v->isVisited()) {
+/*     cout << "DEBUG visit\n";
+ */    if (v->isVisited()) {
         return v->getValue();
+    }else{
+        v->setVisited();
     }
 
     int value;
+    Vertex* vPrev = v;
     Vertex* vv;
-    while ((vv = v->getNext()) != NULL){
-        value = visit(G, vv);
+    while ((vv = vPrev->getNext()) != NULL){
+        getchar();
+        value = visit(G, G->getVertex(vv->getIndex()));
         if (value > v->getValue()) {
             v->setValue(value);
         }
+        vPrev = vv;
     }
     
     return v->getValue();
 }
 
 void solve(Graph *G) {
-    for (int i = 0; G->getNVertice(); i++) {
-        visit(G, G->getVertex(i));
+    for (int i = 0; i < G->getNVertice(); i++) {
+/*         cout << "DEBUG solv IDX [" << i <<"]\n";
+ */        visit(G, G->getVertex(i));
     }
 }
 
@@ -169,5 +205,5 @@ void solve(Graph *G) {
 int main() {
     Graph *G = new Graph();
     solve(G);
-    cout << G;
+    cout << *G;
 }

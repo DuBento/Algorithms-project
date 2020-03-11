@@ -2,14 +2,18 @@
 
 class Graph {
 private:
-    vector<Vertex*> _vertices;
+    vector<Vertex*> *_vertices;
 public:
-    Graph(int *verticesVec, int size) {
-        for (int i = 0; i < size; i++) {            
-            _vertices->push_back(new Vertex(i, verticesVec[i]));
-        }
+    Graph() {
+        int *nVertice, *nEdges;
+        readSize(nVertice, nEdges);
+        readInputVertices(_vertices);
+        readInputEdges(_vertices);
+        // for (int i = 0; i < size; i++) {            
+        //     _vertices->push_back(new Vertex(i, verticesVec[i]));
+        // }
         
-        _edges = EdgeStruct(EdgesVec);
+        // _edges = EdgeStruct(EdgesVec);
     }
     vector<int> getChildren(Vertex *v){
         return vector(_edges.getConnecion(_vertices.get)
