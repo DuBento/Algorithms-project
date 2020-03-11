@@ -2,11 +2,13 @@
 
 class Graph {
 private:
-    vector<Vertex*> _vertices;
+    EdgeStruct _edges;
+    vector<Vertex*> *_vertices; 
+
 public:
-    Graph(int *verticesVec, int size) {
-        for (int i = 0; i < size; i++) {            
-            _vertices->push_back(new Vertex(i, verticesVec[i]));
+    Graph(vector<int> *verticesVec, int **EdgesVec) {
+        for (int i: *verticesVec) {
+            _vertices->push_back(new Vertex(i));
         }
         
         _edges = EdgeStruct(EdgesVec);
@@ -17,19 +19,26 @@ public:
 };
 
 
+class Edge {
+
+};
+
+class EdgeStruct {
+private:
+    int **_matrix;
+public:
+    EdgeStruct(int **vec) : _matrix(vec) {}
+    int* getConnections()
+};
+
+
 class Vertex {
 private:
-    int _idx;
-    int _value;
     int _visited = NOT_VISITED;
-    Vertex* _next = NULL;
+    int _value;
     
 public:
-    Vertex(int idx, int value) : _idx(idx), _value(value) {}
-
-    int getIndex() {
-        return _idx;
-    }
+    Vertex(int value) : _value(value) {}
 
     int isVisited() {
         return _visited;
