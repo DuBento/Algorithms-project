@@ -63,11 +63,11 @@ public:
     }
     
     // For debug
-    /* friend ostream& operator<<(ostream &stream, const Vertex &v) {
+    friend ostream& operator<<(ostream &stream, const Vertex &v) {
         stream << "IDX:" << v.getIndex() << "\n";
         stream << "Value:" << v.getValue() << "\n";
         return stream;
-    } */
+    }
 };
 
 class Graph {
@@ -92,7 +92,7 @@ public:
 
     Vertex* getVertex(int idx) const {
         // DEBUG
-        cout  << *_vertice[idx];
+        // cout  << *_vertice[idx];
         return _vertice[idx];
     }
 
@@ -192,8 +192,7 @@ int visit(Graph* G, Vertex* v) {
 
 void solve(Graph *G) {
     for (int i = 0; i < G->getNVertice(); i++) {
-/*         cout << "DEBUG solv IDX [" << i <<"]\n";
- */        visit(G, G->getVertex(i));
+       visit(G, G->getVertex(i));
     }
 }
 
