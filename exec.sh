@@ -10,4 +10,5 @@ for fin in *.in; do
 	echo "===========${filename}=========="
 	../a.out < ${filename}.in > ${filename}.myout
 	diff -b ${filename}.out ${filename}.outhyp
+	read -p "press to cont"
 done

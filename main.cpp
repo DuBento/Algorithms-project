@@ -151,7 +151,7 @@ void readInputEdges(Graph* G) {
     //Introducing vertice in the linked list
     int from, to;
     for (int i = 0; i < G->getNEdges(); i++) {
-        scanf("%d, %d", &from, &to);
+        scanf("%d,%d", &from, &to);
         from--; 
         to--;
         Vertex* v = new Vertex(G->getVertex(to));
@@ -163,7 +163,7 @@ void readInputEdges(Graph* G) {
 
 void readSize(Graph* G) {
     int nVertice, nEdges;
-    scanf("%d, %d", &nVertice, &nEdges);
+    scanf("%d %d", &nVertice, &nEdges);
     G->setNVertices(nVertice);
     G->setNEdges(nEdges);
 }
