@@ -2,9 +2,8 @@
 
 #include <vector>
 
-#define WHITE 0
-#define GREY 1
-#define BLACK 2
+#define VISITED 1
+#define NOT_VISITED 0
 
 using namespace std;
 
@@ -14,7 +13,6 @@ class Vertex;
 void readInputVertice(Graph*);
 void readInputEdges(Graph*);
 void readSize(Graph*);
-int getMax(Graph*, Vertex*);
 int visit(Graph*, Vertex*);
 void solve(Graph*);
 
@@ -22,7 +20,7 @@ class Vertex {
 private:
     int _idx;
     int _value;
-    int _color = WHITE;
+    int _visited = NOT_VISITED;
     Vertex* _next = NULL;
     
 public:
@@ -34,27 +32,12 @@ public:
         return _idx;
     }
 
-    int getColor() const {
-        return _color;
+    int isVisited() const {
+        return _visited;
     }
 
-    bool isWhite() {
-        return _color == WHITE;
-    }
-
-    bool isGrey() {
-        return _color == GREY;
-    }
-    
-    bool isBlack() {
-        return _color == BLACK;
-    }
-
-    void setGrey() {
-        _color = GREY;
-    }
-    void setBlack() {
-        _color = BLACK;
+    void setVisited() {
+        _visited = VISITED;
     }
 
     int getValue() const {
@@ -185,54 +168,22 @@ void readSize(Graph* G) {
     G->setNEdges(nEdges);
 }
 
-int getMax(Graph* G, Vertex* v) {
-    int maxValue = 0;
-    int value = v->getValue();
-    Vertex* vPrev = v;
-    Vertex* vv;
-    while ((vv = vPrev->getNext()) != NULL){
-        // if (vv->isGrey() && (value = getMax(G, vv) > maxValue))
-        //     maxValue = value;
-           
-        // else if (vv->isBlack() && (value = vv->getValue()) > maxValue))
-        //     maxValue = value;
-        
-        if (vv->isGrey())
-            value = getMax(G, vv);
-        else if (vv->isBlack())
-            value = vv->getValue();
-        
-        maxValue = (value > maxValue ? value : maxValue);
-
-        vPrev = vv; //next
-    }
-    return maxValue;
-}
-
-
 int visit(Graph* G, Vertex* v) {
+/*     cout << "DEBUG visit\n";
+ */ if (v->isVisited()) {
+        return v->getValue();
+    }else{
+        v->setVisited();
+    }
+
     int value;
     Vertex* vPrev = v;
     Vertex* vv;
     while ((vv = vPrev->getNext()) != NULL){
-        if (v->isWhite())
-            visit(G, G->getVertex(vv->getIndex()));
-        vPrev = vv;
-
-
-        // value = visit(G, G->getVertex(vv->getIndex()));
-        // if (value > v->getValue()) {
-        //     v->setValue(value);
-        // }
-    }
-
-    v->setBlack();
-    
-    vPrev = v;
-    while ((vv = vPrev->getNext()) != NULL){
-        value = getMax(G, G->getVertex(vv->getIndex()));
-        if (value > v->getValue())
+        value = visit(G, G->getVertex(vv->getIndex()));
+        if (value > v->getValue()) {
             v->setValue(value);
+        }
         vPrev = vv;
     }
     return v->getValue();
