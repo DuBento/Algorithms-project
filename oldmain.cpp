@@ -40,15 +40,17 @@ public:
         _visited = VISITED;
     }
 
+    void setNotVisited() {
+        _visited = NOT_VISITED;
+    }
+
     int getValue() const {
         return _value;
     }
 
     void setValue(int v) { _value = v; }
 
-    void setIdx(int idx) {
-        _idx = idx;
-    }
+    void setIdx(int idx) { _idx = idx; }
     
     /* bool hasNext() {
         return _next != NULL;
@@ -68,13 +70,19 @@ public:
         stream << "Value:" << v.getValue() << "\n";
         return stream;
     }
+
+    ~Vertex() {
+        delete _next;
+    }
 };
 
 class Graph {
 private:
     int _nVertice;
     int _nEdges;
+    int _dirty = 0;
     Vertex** _vertice;
+    
 public:
     Graph() {
         // read number of edges and vertice from input
@@ -86,19 +94,11 @@ public:
     }
 
     
-    Vertex** getVertice() const {
-        return _vertice;
-    }
+    Vertex** getVertice() const { return _vertice; }
 
-    Vertex* getVertex(int idx) const {
-        // DEBUG
-        // cout  << *_vertice[idx];
-        return _vertice[idx];
-    }
+    Vertex* getVertex(int idx) const { return _vertice[idx]; }
 
-    void setVertex(Vertex *v, int idx) {
-        _vertice[idx] = v;
-    }
+    void setVertex(Vertex *v, int idx) { _vertice[idx] = v; }
 
     int getNVertice() const { return _nVertice; }
 
@@ -107,6 +107,17 @@ public:
     int getNEdges() const { return _nEdges; }
     
     void setNEdges(int val) { _nEdges = val; }
+
+    int isDirty() { return _dirty; }
+
+    void setDirty() { _dirty = 1; }
+
+    void setClean() { _dirty = 0; }
+    
+    void setVertexValue(Vertex* v, int value) {
+        v->setValue(value);
+        setDirty();
+    }
 
     Vertex** getChildren(Vertex* vertex) {
         Vertex* vPrev = vertex;
@@ -128,22 +139,21 @@ public:
     }
 
     ~Graph(){
-        // TODO
+        // delete the vetex itself
+        for (int i = 0; i < _nVertice ; i++) 
+            delete _vertice[i];
+
+        // delete the vector of vertices
+        delete[] _vertice;
     }
 };
-
-
 
 void readInputVertice(Graph* G) {
     //Fill in the already created list of size nVertice
     int value;
     for (int i = 0; i < G->getNVertice(); i++) {
         scanf("%d", &value);
-        // Vertex* v = G->getVertex(i);
         G->setVertex(new Vertex(i, value), i);
-        // cout << "INPUTED:\t" << G->getVertex(i)->getValue() << "\n";
-        // G->getVertex(i)->setValue(value);
-        // G->getVertex(i)->setIdx(i);
     }
 }
 
@@ -169,8 +179,8 @@ void readSize(Graph* G) {
 }
 
 int visit(Graph* G, Vertex* v) {
-/*     cout << "DEBUG visit\n";
- */ if (v->isVisited()) {
+    if (v->isVisited()) {
+        //if already visited return the 
         return v->getValue();
     }else{
         v->setVisited();
@@ -178,20 +188,33 @@ int visit(Graph* G, Vertex* v) {
 
     int value;
     Vertex* vPrev = v;
-    Vertex* vv;
-    while ((vv = vPrev->getNext()) != NULL){
-        value = visit(G, G->getVertex(vv->getIndex()));
-        if (value > v->getValue()) {
-            v->setValue(value);
-        }
-        vPrev = vv;
+    Vertex* vTmp;
+    while ((vTmp = vPrev->getNext()) != NULL){
+        // visit friend
+        value = visit(G, G->getVertex(vTmp->getIndex()));
+        // update the value if greater
+        if (value > v->getValue())
+            G->setVertexValue(v, value);
+
+        vPrev = vTmp;
     }
-    return v->getValue();
+    // returns the value of the current vertex
+    return v->getValue(); 
 }
 
 void solve(Graph *G) {
     for (int i = 0; i < G->getNVertice(); i++) {
        visit(G, G->getVertex(i));
+    }
+
+    if (G->isDirty()) {
+        // checks whether there were any changes in the values of the graph
+        G->setClean();
+        // restarts the "color" of the vertices
+        for (int i = 0; i < G->getNVertice(); i++)
+            G->getVertex(i)->setNotVisited();
+        // runs algorithm again to make sure there are no more changes to be done
+        solve(G);
     }
 }
 
@@ -200,4 +223,5 @@ int main() {
     Graph *G = new Graph();
     solve(G);
     cout << *G;
+    delete G;
 }
