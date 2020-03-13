@@ -1,7 +1,5 @@
 #include <iostream>
 
-#include <vector>
-
 #define VISITED 1
 #define NOT_VISITED 0
 
@@ -26,36 +24,20 @@ private:
 public:
     Vertex() : _idx(0), _value(0) {}
     Vertex(int idx, int value) : _idx(idx), _value(value) {}
-    Vertex(const Vertex* v) : Vertex(v->getIndex(), v->getValue()) {}
+    Vertex(const Vertex* v) : Vertex(v->getIdx(), v->getValue()) {}
 
-    int getIndex() const {
-        return _idx;
-    }
+    int getIdx() const { return _idx; }
 
-    int isVisited() const {
-        return _visited;
-    }
-
-    void setVisited() {
-        _visited = VISITED;
-    }
-
-    void setNotVisited() {
-        _visited = NOT_VISITED;
-    }
-
-    int getValue() const {
-        return _value;
-    }
+    int getValue() const { return _value; }
 
     void setValue(int v) { _value = v; }
 
-    void setIdx(int idx) { _idx = idx; }
-    
-    /* bool hasNext() {
-        return _next != NULL;
-    } */
+    int isVisited() const { return _visited; }
 
+    void setVisited() { _visited = VISITED; }
+
+    void setNotVisited() { _visited = NOT_VISITED; }
+    
     Vertex* getNext() {
         return _next;
     }
@@ -64,9 +46,9 @@ public:
         _next = v;
     }
     
-    // For debug
+    // For debug purposes
     friend ostream& operator<<(ostream &stream, const Vertex &v) {
-        stream << "IDX:" << v.getIndex() << "\n";
+        stream << "IDX:" << v.getIdx() << "\n";
         stream << "Value:" << v.getValue() << "\n";
         return stream;
     }
@@ -80,7 +62,7 @@ class Graph {
 private:
     int _nVertice;
     int _nEdges;
-    int _dirty = 0;
+    int _dirty = 0; // to check if there were any changes in the value of the graph 
     Vertex** _vertice;
     
 public:
@@ -89,13 +71,12 @@ public:
         readSize(this);
         // creates the list of Vertex*
         _vertice = new Vertex*[_nVertice];
+        // read the value of the vertice inputed
         readInputVertice(this);
+        // read the edges between two vertice inputed
         readInputEdges(this);
     }
-
     
-    Vertex** getVertice() const { return _vertice; }
-
     Vertex* getVertex(int idx) const { return _vertice[idx]; }
 
     void setVertex(Vertex *v, int idx) { _vertice[idx] = v; }
@@ -119,16 +100,9 @@ public:
         setDirty();
     }
 
-    Vertex** getChildren(Vertex* vertex) {
-        Vertex* vPrev = vertex;
-        Vertex* v;
-        Vertex** vertice;
-        int i = 0;
-        while ((v = vPrev->getNext()) != NULL) {
-            vertice[i++] = v;
-            vPrev = v;
-        }
-        return vertice; 
+    void pushFront(Vertex* v, int from, int to) {
+        v->setNext(getVertex(from)->getNext());
+        getVertex(to)->setNext(v);
     }
     
     friend ostream& operator<<(ostream &stream, const Graph &G) {
@@ -173,12 +147,12 @@ void readInputEdges(Graph* G) {
     int from, to;
     for (int i = 0; i < G->getNEdges(); i++) {
         scanf("%d %d", &from, &to);
+        // Index shift for the array starts at 0
         from--; 
         to--;
         Vertex* v = new Vertex(G->getVertex(to));
-        v->setNext(G->getVertex(from)->getNext());
-        G->getVertex(from)->setNext(v);
-
+        // Insert in begining of linked list
+        G->pushFront(v, from, to);
     }
 }
 
@@ -198,11 +172,10 @@ int visit(Graph* G, Vertex* v) {
     Vertex* vTmp;
     while ((vTmp = vPrev->getNext()) != NULL){
         // visit friend
-        value = visit(G, G->getVertex(vTmp->getIndex()));
+        value = visit(G, G->getVertex(vTmp->getIdx()));
         // update the value if greater
         if (value > v->getValue())
             G->setVertexValue(v, value);
-
         vPrev = vTmp;
     }
     // returns the value of the current vertex
@@ -210,6 +183,7 @@ int visit(Graph* G, Vertex* v) {
 }
 
 void solve(Graph *G) {
+    // starts by visiting all vertice (in reality one vertex is not visited twice)
     for (int i = 0; i < G->getNVertice(); i++) {
        visit(G, G->getVertex(i));
     }
