@@ -12,5 +12,3 @@ for fin in *.in; do
 	diff -b ${filename}.out ${filename}.myout
 	read -p "press to cont"
 done
-
-LWLFLGUA

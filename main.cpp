@@ -6,6 +6,8 @@
 #define GREY 1
 #define BLACK 2
 
+#define MAX(a,b) a > b ? a : b
+
 using namespace std;
 
 class Graph;
@@ -51,6 +53,7 @@ public:
     }
 
     void setGrey() {
+        // printf("SETGREY\n");
         _color = GREY;
     }
     void setBlack() {
@@ -81,8 +84,9 @@ public:
     
     // For debug
     friend ostream& operator<<(ostream &stream, const Vertex &v) {
-        stream << "IDX:" << v.getIndex() << "\n";
+        stream << "IDX:" << v.getIndex() + 1 << "\n";
         stream << "Value:" << v.getValue() << "\n";
+        stream << "Color:" << v.getColor() << "\n";
         return stream;
     }
 };
@@ -124,6 +128,10 @@ public:
     int getNEdges() const { return _nEdges; }
     
     void setNEdges(int val) { _nEdges = val; }
+
+    Vertex* getOriginalVertex(Vertex* v) {
+        return getVertex(v->getIndex());
+    }
 
     Vertex** getChildren(Vertex* vertex) {
         Vertex* vPrev = vertex;
@@ -188,24 +196,37 @@ void readSize(Graph* G) {
 int getMax(Graph* G, Vertex* v) {
     int maxValue = 0;
     int value = v->getValue();
-    Vertex* vPrev = v;
-    Vertex* vv;
-    while ((vv = vPrev->getNext()) != NULL){
-        // if (vv->isGrey() && (value = getMax(G, vv) > maxValue))
+    Vertex* vPrev;
+    Vertex* vTmp = v;
+    Vertex* vOrig;
+    do{
+        getchar();
+        // cout << "TMP\t" << *vTmp << "\n";
+        vOrig = G->getOriginalVertex(vTmp);
+        if (vOrig->isGrey() && vOrig->getNext() != NULL){
+            vOrig->setBlack();
+            value = getMax(G, vOrig->getNext());
+            vOrig->setGrey();
+        }
+        else if (vOrig->isBlack())
+            value = vOrig->getValue();
+        else
+            return -1; // in case of v color is white
+
+        maxValue = MAX(maxValue, value);
+        // debug
+        // printf("VALUE %d ::: MAXVALUE %d\n", value, maxValue);
+        vPrev = vTmp; //next
+
+    }while ((vTmp = vPrev->getNext()) != NULL);
+
+        // if (vTmp->isGrey() && (value = getMax(G, vTmp) > maxValue))
         //     maxValue = value;
            
-        // else if (vv->isBlack() && (value = vv->getValue()) > maxValue))
+        // else if (vTmp->isBlack() && (value = vTmp->getValue()) > maxValue))
         //     maxValue = value;
         
-        if (vv->isGrey())
-            value = getMax(G, vv);
-        else if (vv->isBlack())
-            value = vv->getValue();
-        
-        maxValue = (value > maxValue ? value : maxValue);
-
-        vPrev = vv; //next
-    }
+    // printf("ACABOU GETMAX!!!!\n");
     return maxValue;
 }
 
@@ -213,33 +234,46 @@ int getMax(Graph* G, Vertex* v) {
 int visit(Graph* G, Vertex* v) {
     int value;
     Vertex* vPrev = v;
-    Vertex* vv;
-    while ((vv = vPrev->getNext()) != NULL){
-        if (v->isWhite())
-            visit(G, G->getVertex(vv->getIndex()));
-        vPrev = vv;
+    Vertex* vTmp;
+    Vertex* vOrig;
+    getchar();
+    // cout << "WHITE\t" << *v ; 
+    //vertex visited 
+    v->setGrey();
 
-
-        // value = visit(G, G->getVertex(vv->getIndex()));
-        // if (value > v->getValue()) {
-        //     v->setValue(value);
-        // }
+    while ((vTmp = vPrev->getNext()) != NULL){
+        vOrig = G->getOriginalVertex(vTmp);
+        if (vOrig->isWhite()){
+            // cout << "VTMP\t" << *vTmp << "\n"; 
+            // cout << "VORIG\t" << *vOrig << "\n"; 
+            visit(G, vOrig);
+        }
+        vPrev = vTmp;
     }
 
+    // cout << "GREY\t" << *v; 
+
+    //vertex terminated
     v->setBlack();
     
-    vPrev = v;
-    while ((vv = vPrev->getNext()) != NULL){
-        value = getMax(G, G->getVertex(vv->getIndex()));
-        if (value > v->getValue())
-            v->setValue(value);
-        vPrev = vv;
+    vPrev = v; //reboot vPrev
+    while ((vTmp = vPrev->getNext()) != NULL){
+        vOrig = G->getOriginalVertex(vTmp);
+
+        value = getMax(G, vOrig);
+        // printf("\tGETMAX RESULT: %d\n", value);
+        v->setValue(MAX(value, v->getValue()));
+        vPrev = vTmp;
     }
+
+    // cout << "BLACK\t" << *v << "\n"; 
+
     return v->getValue();
 }
 
 void solve(Graph *G) {
     for (int i = 0; i < G->getNVertice(); i++) {
+    //    cout << "ITER:\t" << i << "\n";
        visit(G, G->getVertex(i));
     }
 }
