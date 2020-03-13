@@ -100,9 +100,9 @@ public:
         setDirty();
     }
 
-    void pushFront(Vertex* v, int from, int to) {
-        v->setNext(getVertex(from)->getNext());
-        getVertex(to)->setNext(v);
+    void pushFront(Vertex* v, int idx) {
+        v->setNext(getVertex(idx)->getNext());
+        getVertex(idx)->setNext(v);
     }
     
     friend ostream& operator<<(ostream &stream, const Graph &G) {
@@ -152,7 +152,7 @@ void readInputEdges(Graph* G) {
         to--;
         Vertex* v = new Vertex(G->getVertex(to));
         // Insert in begining of linked list
-        G->pushFront(v, from, to);
+        G->pushFront(v, from);
     }
 }
 
