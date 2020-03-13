@@ -148,17 +148,6 @@ public:
     }
 };
 
-// ================================
-// Input Parser
-// ================================
-
-void readSize(Graph* G) {
-    int nVertice, nEdges;
-    scanf("%d,%d", &nVertice, &nEdges);
-    G->setNVertices(nVertice);
-    G->setNEdges(nEdges);
-}
-
 void readInputVertice(Graph* G) {
     //Fill in the already created list of size nVertice
     int value;
@@ -182,16 +171,20 @@ void readInputEdges(Graph* G) {
     }
 }
 
-// ================================
-// Algorithm
-// ================================
+void readSize(Graph* G) {
+    int nVertice, nEdges;
+    scanf("%d,%d", &nVertice, &nEdges);
+    G->setNVertices(nVertice);
+    G->setNEdges(nEdges);
+}
 
 int visit(Graph* G, Vertex* v) {
-    if (v->isVisited())
-        //if already visited return the value
+    if (v->isVisited()) {
+        //if already visited return the 
         return v->getValue();
-    else
+    }else{
         v->setVisited();
+    }
 
     int value;
     Vertex* vPrev = v;
@@ -225,9 +218,6 @@ void solve(Graph *G) {
     }
 }
 
-// ================================
-// Main
-// ================================
 
 int main() {
     Graph *G = new Graph();
