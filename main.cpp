@@ -16,7 +16,7 @@ void solve(Graph*);
 
 class Vertex {
 private:
-    int _idx;
+    int _idx; // allows us to identify each vertex
     int _value;
     int _visited = NOT_VISITED;
     Vertex* _next = NULL;
@@ -62,7 +62,7 @@ class Graph {
 private:
     int _nVertice;
     int _nEdges;
-    int _dirty = 0; // to check if there were any changes in the value of the graph 
+    bool _dirty = true; // to check if there were any changes in the value of the graph 
     Vertex** _vertice;
     
 public:
@@ -89,11 +89,11 @@ public:
     
     void setNEdges(int val) { _nEdges = val; }
 
-    int isDirty() { return _dirty; }
+    bool isDirty() { return _dirty; }
 
-    void setDirty() { _dirty = 1; }
+    void setDirty() { _dirty = true; }
 
-    void setClean() { _dirty = 0; }
+    void setClean() { _dirty = false; }
     
     void setVertexValue(Vertex* v, int value) {
         v->setValue(value);
@@ -183,19 +183,16 @@ int visit(Graph* G, Vertex* v) {
 }
 
 void solve(Graph *G) {
-    // starts by visiting all vertice (in reality one vertex is not visited twice)
-    for (int i = 0; i < G->getNVertice(); i++) {
-       visit(G, G->getVertex(i));
-    }
-
-    if (G->isDirty()) {
-        // checks whether there were any changes in the values of the graph
-        G->setClean();
+    while (G->isDirty()) {
+    /* runs algorithm until there are no more changes to be done
+    checks whether there were any changes in the values of the graph */
+        
         // restarts the "color" of the vertices
+        G->setClean();
+        
+        // visiting all vertice (in reality one vertex is not visited twice)
         for (int i = 0; i < G->getNVertice(); i++)
             G->getVertex(i)->setNotVisited();
-        // runs algorithm again to make sure there are no more changes to be done
-        solve(G);
     }
 }
 
