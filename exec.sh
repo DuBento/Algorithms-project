@@ -1,9 +1,8 @@
 #!/bin/bash
 
 INPUTDIR=tests_p1
-
-g++ -Wall main.cpp
-
+file=trash/difsmain.cpp
+g++ -std=c++11 -O3 -Wall $file -lm	
 cd $INPUTDIR
 for fin in *.in; do
 	filename=${fin%.*}
