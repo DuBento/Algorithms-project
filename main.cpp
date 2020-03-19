@@ -112,6 +112,17 @@ public:
         return stream;
     }
 
+    void refreshGraph() {
+        // checks whether there were any changes in the values of the graph
+        if (isDirty()) {
+            // checks whether there were any changes in the values of the graph
+            setClean();
+            // restarts the "color" of the vertices
+            for (int i = 0; i < getNVertice(); i++)
+                getVertex(i)->setNotVisited();
+        }
+    }
+
     ~Graph(){
         // delete the vetex itself
         for (int i = 0; i < _nVertice ; i++) 
@@ -160,17 +171,6 @@ void readInputEdges(Graph* G) {
 // Algorithm
 // ================================
 
-void refreshGraph(Graph* G) {
-    // checks whether there were any changes in the values of the graph
-    if (G->isDirty()) {
-        // checks whether there were any changes in the values of the graph
-        G->setClean();
-        // restarts the "color" of the vertices
-        for (int i = 0; i < G->getNVertice(); i++)
-            G->getVertex(i)->setNotVisited();
-    }
-}
-
 int visit(Graph* G, Vertex* v) {
     if (v->isVisited())
         //if already visited return the value
@@ -196,7 +196,7 @@ int visit(Graph* G, Vertex* v) {
 void solve(Graph *G) {
     // runs algorithm until there are no more changes to be done
     do {
-        refreshGraph(G); // resets the states altered by the algorithm of previous run
+        G->refreshGraph(); // resets the states altered by the algorithm of previous run
         
         // visiting all vertice (in reality one vertex is not visited twice)
         for (int i = 0; i < G->getNVertice(); i++)
