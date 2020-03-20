@@ -1,6 +1,6 @@
 from parse import compile
 
-f = open("experimental/resultados", "r")
+f = open("experimental/result/resultados", "r")
 p_content = compile("real\t0m{}s")
 
 # while line = f.readline()
