@@ -94,11 +94,11 @@ void parseCommandLine(int argc, char **argv) {
     exit(0);
   }
 
-  if (_nNetworks*_maxV < _V) {
+  /* if (_nNetworks*_maxV < _V) {
     printf("\nERRO: #SubR * #M não pode ser menor do que #P\n");
     printUsage();
     exit(0);
-  }
+  } */
 }
 
 
