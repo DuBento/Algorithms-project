@@ -19,8 +19,8 @@ enum Flux {EMPTY, FULL};
 
 class Vertex {
 public:
-    vector<Vertex*> _parents;
-    vector<Vertex*> _children;
+    vector<Vertex*> _parents = {s};
+    vector<Vertex*> _children = {t};
     Type _type = NORMAL;
     int _flux = 0;
     int _xPos, _yPos;
@@ -68,21 +68,36 @@ public:
         }
     }
 
-    virtual void fillEdges() {
-        cout << _xPos << ";" << _yPos << "\n";
-        auxFillEdges(SHOP, &_parents);
-        cout << "END OF Parent NORMAL" << "\n";
-        auxFillEdges(CLIENT, &_children);
-        cout << "END OF NORMAL" << "\n";
-    }
+    virtual void fillEdges() {}
+        // cout << _xPos << ";" << _yPos << "\n";
+        // auxFillEdges(SHOP, &_parents);
+        // cout << "END OF Parent NORMAL" << "\n";
+        // auxFillEdges(CLIENT, &_children);
+        // cout << "END OF NORMAL" << "\n";
+    
 
     friend ostream& operator<<(ostream &stream, Vertex const v) {
-        stream << "posX " << v._xPos+1 << " posY" << v._yPos+1 << '\n';
+        stream << "posX " << v._xPos << " posY" << v._yPos << '\n';
         return stream;
     }
 
     ~Vertex() {
         //TODO delete vector??     
+    }
+};
+
+class Normal : public Vertex {
+public:
+    Normal(int xPos, int yPos) : Vertex(xPos, yPos) {
+        setType(NORMAL);
+    }
+    // shops dont have children except for t
+    void fillEdges() override {
+        cout << _xPos << ";" << _yPos << "\n";
+        auxFillEdges(SHOP, &_parents);
+        cout << "END OF Parent NORMAL" << "\n";
+        auxFillEdges(CLIENT, &_children);
+        cout << "END OF NORMAL" << "\n";
     }
 };
 
@@ -126,10 +141,10 @@ void createMap() {
     // inicialize each Vertice
     for (int i = 0; i < nAvenues; i++)
         for (int j = 0; j < nStreets; j++)
-            map[i][j] = new Vertex(i,j);    // every vertex is an empty corner by default
+            map[i][j] = new Normal(i,j);    // every vertex is an empty corner by default
 
-    s = new Vertex(-1,-1);   
-    t = new Vertex(nAvenues, nStreets);    
+    s = new Normal(-1,-1);   
+    t = new Normal(nAvenues, nStreets);    
     // Vertex* map[10][10];
     // map1 = Vertex[10][10]; //XXX BAD??? ;)
     
@@ -198,27 +213,24 @@ int main() {
     createEdges();
 
     //cout << map[0][0]->getType();
-    // cout << *map[0][0]->_children.at(0);
+    cout << *(map[0][2]->_children[0]);
     // for (auto k : map[0][0]->_children)
     //     cout << 0 << ";" << 0 << "\t" << *k << ' ';
 
     // for (int k = 0; k != map[0][0]->_children.size(); ++k)
     //     cout << 0 << ";" << 0 << "\t" << *map[0][0]->_children[k] << ' ';
-    cout << t << "   target\n";
+    
     for(int i = 0; i<nAvenues; i++)
         for(int j=0; j<nStreets; j++){
-            cout << "---------- " << i << ";" << j << "\tsize" << map[i][j]->_children.size() <<'\n';
-            unsigned sk = map[i][j]->_children.size();
-            for(unsigned int k =0 ; k < sk; k++)
-                cout << i+1 << ";" << j+1 << "\t" << *(map[i][j]->_children[k]) << '\n';
-            // if ((i!=0 || j!=2)){
+            cout << "---------- " << i << ";" << j << '\n';
+            if ((i!=0 || j!=2)){
             
-            // for (vector<Vertex*>::const_iterator k = map[i][j]->_children.begin(); k != map[i][j]->_children.end(); ++k)
-            //     cout << i << ";" << j << "\t" << **k << '\n';
-            // }
+            for (vector<Vertex*>::const_iterator k = map[i][j]->_children.begin(); k != map[i][j]->_children.end(); ++k)
+                cout << i << ";" << j << "\t" << **k << '\n';
+            }
         }
-    // edgesMatrix = (int**)malloc(nAvenues*nStreets*sizeof(int*));
-    // for(int i=0; i<nAvenues*nStreets; i++) map[i] = (Vertex**)malloc(nAvenues*nStreets*sizeof(int));
+    edgesMatrix = (int**)malloc(nAvenues*nStreets*sizeof(int*));
+    for(int i=0; i<nAvenues*nStreets; i++) map[i] = (Vertex**)malloc(nAvenues*nStreets*sizeof(int));
 
 
 

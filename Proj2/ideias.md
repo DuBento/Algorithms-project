@@ -1,4 +1,8 @@
-## Horas : 4h
+## Horas : 10h
+
+#REFS
+- https://stackoverflow.com/questions/2128728/allocate-matrix-in-c
+
 
 # Processo
 
