@@ -88,6 +88,7 @@ public:
     void removeChild(Vertex *v) {
         for (long unsigned int i = 0; i < _children.size(); i++) 
             if (v == _children.at(i)) {
+                // cout << "No RemoveChild\t" << *_children.at(i) << "\n";
                 _children.erase(_children.begin()+i); 
                 return;
             }
@@ -95,7 +96,7 @@ public:
 
 
     friend ostream& operator<<(ostream &stream, Vertex const v) {
-        stream << "posX " << v._xPos+1 << " posY" << v._yPos+1 << '\n';
+        stream << "posI " << v._xPos+1 << " posJ " << v._yPos+1;
         return stream;
     }
 
@@ -161,7 +162,7 @@ void createMap() {
         map_out[i] = (Vertex**)malloc(nStreets*sizeof(Vertex*));  
     }
 
-    // inicialize each Vertice
+    // inicialize each Vertex
     for (int i = 0; i < nAvenues; i++)
         for (int j = 0; j < nStreets; j++) {
             map_in[i][j] = new Vertex(i,j);    // every vertex is an empty corner by default
@@ -199,8 +200,8 @@ void parseValues() {
             delete map_out[x][y];
             map_in[x][y] = new Blocked(x,y);
             map_out[x][y] = new Blocked(x,y); 
-        }
-        
+        }else if (map_in[x][y]->getType() == CLIENT)
+            continue;
         else {
             delete map_in[x][y];
             delete map_out[x][y];
@@ -220,6 +221,52 @@ void createEdges() {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+//debug
+void printChildren(Vertex*** map){
+    cout << "CHILDREN" << "\n";
+    // for source
+    unsigned sk = s->_children.size();
+    for(unsigned int k =0 ; k < sk; k++){
+        cout << "s: " << "\t" << *(s->_children[k]);
+        if (s->_children[k] == t){
+            cout << "\n";
+            continue;
+        }
+        if(s->_children[k] == map_in[s->_children[k]->_xPos][s->_children[k]->_yPos])
+            cout << "\tIN\n";
+        else if (s->_children[k] == map_out[s->_children[k]->_xPos][s->_children[k]->_yPos])
+            cout << "\tOUT\n"; 
+    }
+
+    
+    
+    for(int i = 0; i<nAvenues; i++)
+        for(int j=0; j<nStreets; j++){
+            // cout << "---------- " << i << ";" << j << "\tsize" << map[i][j]->_children.size() <<'\n';
+            unsigned sk = map[i][j]->_children.size();
+            for(unsigned int k =0 ; k < sk; k++)
+                cout << i+1 << ";" << j+1 << "\t" << *(map[i][j]->_children[k]) << '\n';
+        }
+}
+
+
+
+
+
+
+
+
+
+
 
 void visit(Vertex* v, vector<Vertex*> *path, bool *endFound) {
     if (v == t) {
@@ -242,10 +289,19 @@ void visit(Vertex* v, vector<Vertex*> *path, bool *endFound) {
 
 //debug
 void printPath(vector<Vertex*> path) {
-    //cout << "_-_--___PATH____----____\n";
-    for(Vertex* v: path)
-        cout << *v << "\n";
-    //cout << "--__--__END_OF_PATH____-_----\n";
+    cout << "_-_--___PATH____----____\n";
+    for(Vertex* v: path){
+        cout << *v;
+        if (v == s  || v == t){
+            cout << "\n";
+            continue;
+        }
+        if(v == map_in[v->_xPos][v->_yPos])
+            cout << "\tIN\n";
+        else if (v == map_out[v->_xPos][v->_yPos])
+            cout << "\tOUT\n";        
+    }   
+    cout << "--__--__END_OF_PATH____-_----\n";
 
 }
 
@@ -262,43 +318,39 @@ void findPath(vector<Vertex*> *path) {
     bool endFound = false;
     // saves augmentation path from s to t
     visit(s, path, &endFound);
-    
-    /*
-    list<Vertex*> queue;
-    queue.push_back(s);
-    while(!queue.empty()) {
-        visit(queue.pop_front());
-
-        for (i = adj[s].begin(); i != adj[s].end(); ++i) 
-        { 
-            if (!visited[*i]) 
-            { 
-                visited[*i] = true; 
-                queue.push_back(*i); 
-            } 
-        } 
-    }
-    */
 }
 
 int computeMaxFlow() {
     vector<Vertex*> path;
     findPath(&path);
     Vertex* previous;
-    
-    //debug
-
 
     while (!path.empty()) {
         previous = NULL;
+        // printPath(path);
+        //printChildren(map_in);
         
+        /* unsigned sk = s->_children.size();
+        for(unsigned int k =0 ; k < sk; k++){
+            cout << "s: " << "\t" << *(s->_children[k]);
+            if (s->_children[k] == t){
+                cout << "\n";
+                continue;
+            }
+            if(s->_children[k] == map_in[s->_children[k]->_xPos][s->_children[k]->_yPos])
+                cout << "\tIN\n";
+            else if (s->_children[k] == map_out[s->_children[k]->_xPos][s->_children[k]->_yPos])
+                cout << "\tOUT\n"; 
+        } */
         // printPath(path);
 
         // loop through path
         for(Vertex* v : path) {
             if (previous != NULL) {
+                // cout << "No MAXFLOW remove\t" << *v << "\n";
                 previous->removeChild(v);
                 v->addChild(previous);
+                //cout << "nova aresta: " << *v << " --> " << *previous << '\n';
             }
             previous = v;
         }
@@ -313,45 +365,6 @@ int computeMaxFlow() {
 
 
 
-
-// void readInputVertice(Graph* G) {
-//     //Fill in the already created list of size nVertice
-//     int value;
-//     for (int i = 0; i < G->getNVertice(); i++) {
-//         scanf("%d", &value);
-//         G->setVertex(new Vertex(i, value), i);
-//     }
-// }
-
-// void readInputEdges(Graph* G) {
-//     //Introducing vertice in the linked list
-//     int from, to;
-//     for (int i = 0; i < G->getNEdges(); i++) {
-//         scanf("%d %d", &from, &to);
-//         // Index shift for the array starts at 0
-//         from--; 
-//         to--;
-//         Vertex* v = new Vertex(G->getVertex(to));
-//         // Insert in begining of linked list
-//         G->pushFront(v, from);
-//     }
-// }
-
-
-//debug
-void printChildren(Vertex*** map){
-    cout << "CHILDREN" << "\n";
-    for(int i = 0; i<nAvenues; i++)
-        for(int j=0; j<nStreets; j++){
-            cout << "---------- " << i << ";" << j << "\tsize" << map[i][j]->_children.size() <<'\n';
-            unsigned sk = map[i][j]->_children.size();
-            for(unsigned int k =0 ; k < sk; k++)
-                cout << i+1 << ";" << j+1 << "\t" << *(map[i][j]->_children[k]) << '\n';
-        }
-}
-
-
-
 int main() {
     createMap();
     parseValues();
@@ -362,7 +375,9 @@ int main() {
     // printChildren(map_in);
     
     // cout << "MAP_OUT" << "\n";
-    // printChildren(map_out);
+    //printChildren(map_in);
+    
+    //cout << map_in[1][2]->_children.size() << '\n';
     
     cout << computeMaxFlow() << "\n";
 
