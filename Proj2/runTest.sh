@@ -1,5 +1,6 @@
 #!/bin/bash                                                                                                                                                                                                                                                                                                                                                                                                                                                                               INPUTDIR=tests_p1                                                                                                                                                                                                                            file=trash/difsmain.cpp                                                                                                                                                                                                                      g++ -std=c++11 -O3 -Wall $file -lm                                                                                                                                                                                                           cd $INPUTDIR                                                                                                                                                                                                                                 for fin in *.in; do                                                                                                                                                                                                                                  filename=${fin%.*}                                                                                                                                                                                                                           echo "===========${filename}=========="                                                                                                                                                                                                      ../a.out < ${filename}.in > ${filename}.myout                                                                                                                                                                                                diff -b ${filename}.out ${filename}.myout                                                                                                                                                                                                    read -p "press to cont"                              
-g++ -std=c++11 -O3 -Wall main.cpp -lm > /dev/null 2>&1
+g++ -std=c++11 -O3 -Wall main.cpp -lm -o dfs.out> /dev/null 2>&1
+g++ -std=c++11 -O3 -Wall mainbfs.cpp -lm -o bfs.out> /dev/null 2>&1
 #-n -N min, max number of streets
 #-m -M min, max number of avenues
 #-S max number of shops
@@ -7,5 +8,7 @@ g++ -std=c++11 -O3 -Wall main.cpp -lm > /dev/null 2>&1
 python p2_gerador.py -n $1 -m $2 -N $1 -M $2 -S $3 -C $4 > input
 echo "input file:"
 cat input
-echo "project output:"
-./a.out < input
+echo "project DFS output:"
+./dfs.out < input
+echo "project BFS output:"
+./bfs.out < input
