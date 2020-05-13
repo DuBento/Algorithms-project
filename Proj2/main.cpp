@@ -260,14 +260,6 @@ void printChildren(Vertex*** map){
 
 
 
-
-
-
-
-
-
-
-
 void visit(Vertex* v, vector<Vertex*> *path, bool *endFound) {
     if (v == t) {
         path->push_back(t);
@@ -327,30 +319,12 @@ int computeMaxFlow() {
 
     while (!path.empty()) {
         previous = NULL;
-        // printPath(path);
-        //printChildren(map_in);
-        
-        /* unsigned sk = s->_children.size();
-        for(unsigned int k =0 ; k < sk; k++){
-            cout << "s: " << "\t" << *(s->_children[k]);
-            if (s->_children[k] == t){
-                cout << "\n";
-                continue;
-            }
-            if(s->_children[k] == map_in[s->_children[k]->_xPos][s->_children[k]->_yPos])
-                cout << "\tIN\n";
-            else if (s->_children[k] == map_out[s->_children[k]->_xPos][s->_children[k]->_yPos])
-                cout << "\tOUT\n"; 
-        } */
-        // printPath(path);
-
+   
         // loop through path
         for(Vertex* v : path) {
             if (previous != NULL) {
-                // cout << "No MAXFLOW remove\t" << *v << "\n";
                 previous->removeChild(v);
                 v->addChild(previous);
-                //cout << "nova aresta: " << *v << " --> " << *previous << '\n';
             }
             previous = v;
         }
@@ -369,15 +343,6 @@ int main() {
     createMap();
     parseValues();
     createEdges();
-
-    // DEBUG
-    // cout << "MAP_IN" << "\n";
-    // printChildren(map_in);
-    
-    // cout << "MAP_OUT" << "\n";
-    //printChildren(map_in);
-    
-    //cout << map_in[1][2]->_children.size() << '\n';
     
     cout << computeMaxFlow() << "\n";
 
