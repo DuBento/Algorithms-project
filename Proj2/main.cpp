@@ -115,6 +115,7 @@ public:
         _children.push_back(map_out[_xPos][_yPos]);
     }
     void fillEdgesOut() override {
+        // add artificial target 
         _children.push_back(t);
     }
 };
@@ -162,11 +163,11 @@ void createMap() {
         map_out[i] = (Vertex**)malloc(nStreets*sizeof(Vertex*));  
     }
 
-    // inicialize each Vertex
+    // inicialize each Vertex, which are "empty corners" by default
     for (int i = 0; i < nAvenues; i++)
         for (int j = 0; j < nStreets; j++) {
-            map_in[i][j] = new Vertex(i,j);    // every vertex is an empty corner by default
-            map_out[i][j] = new Vertex(i,j);    // every vertex is an empty corner by default
+            map_in[i][j] = new Vertex(i,j);
+            map_out[i][j] = new Vertex(i,j);
         }
 
     s = new Vertex(-1,-1);   
@@ -181,13 +182,17 @@ void parseValues() {
 
     // read Shops (x,y) coordinates
     for (int i = 0; i < nShops; i++) {
+        // read input
         scanf("%d %d", &x, &y);
         x--; y--; // input offset
+        // check redundancy
+        if(map_in[x][y]->getType() == SHOP) continue;
+        // delete empty vertex
         delete map_in[x][y];
         delete map_out[x][y];
+
         map_in[x][y] = new Shop(x,y);
         map_out[x][y] = new Shop(x,y);
-        //add to target
     }
 
     // read Clients (x,y) coordinates    
@@ -222,14 +227,6 @@ void createEdges() {
     }
 }
 
-
-
-
-
-
-
-
-
 //debug
 void printChildren(Vertex*** map){
     cout << "CHILDREN" << "\n";
@@ -259,6 +256,23 @@ void printChildren(Vertex*** map){
 }
 
 
+void printPath(vector<Vertex*> path) {
+    cout << "_-_--___PATH____----____\n";
+    for(Vertex* v: path){
+        cout << *v;
+        if (v == s  || v == t){
+            cout << "\n";
+            continue;
+        }
+        if(v == map_in[v->_xPos][v->_yPos])
+            cout << "\tIN\n";
+        else if (v == map_out[v->_xPos][v->_yPos])
+            cout << "\tOUT\n";        
+    }   
+    cout << "--__--__END_OF_PATH____-_----\n";
+}
+
+
 
 void visit(Vertex* v, vector<Vertex*> *path, bool *endFound) {
     if (v == t) {
@@ -279,23 +293,7 @@ void visit(Vertex* v, vector<Vertex*> *path, bool *endFound) {
     if (!*endFound) path->pop_back();
 }
 
-//debug
-void printPath(vector<Vertex*> path) {
-    cout << "_-_--___PATH____----____\n";
-    for(Vertex* v: path){
-        cout << *v;
-        if (v == s  || v == t){
-            cout << "\n";
-            continue;
-        }
-        if(v == map_in[v->_xPos][v->_yPos])
-            cout << "\tIN\n";
-        else if (v == map_out[v->_xPos][v->_yPos])
-            cout << "\tOUT\n";        
-    }   
-    cout << "--__--__END_OF_PATH____-_----\n";
 
-}
 
 void findPath(vector<Vertex*> *path) {
     // initialize all vertices as not visited
@@ -316,38 +314,37 @@ int computeMaxFlow() {
     vector<Vertex*> path;
     findPath(&path);
     Vertex* previous;
+    Vertex* current;
 
     while (!path.empty()) {
         previous = NULL;
    
         // loop through path
-        for(Vertex* v : path) {
+        while (!path.empty()) {
+            current = path.at(path.size()-1);
+            path.pop_back();
             if (previous != NULL) {
-                previous->removeChild(v);
-                v->addChild(previous);
+                current->removeChild(previous);
+                previous->addChild(current);
             }
-            previous = v;
-        }
+            previous = current;
+        } 
+        // for(Vertex* v : path) {
+        //     if (previous != NULL) {
+        //         previous->removeChild(v);
+        //         v->addChild(previous);
+        //     }
+        //     previous = v;
+        // }
         maxFlow++;
-        path.erase(path.begin(), path.end());
+        // path.erase(path.begin(), path.end());
         findPath(&path);
     }
 
     return maxFlow;
 }
 
-
-
-
-int main() {
-    createMap();
-    parseValues();
-    createEdges();
-    
-    cout << computeMaxFlow() << "\n";
-
-    //im a little sprout :)
-    
+void cleanRuntime() {
     for (int i=0; i<nAvenues; i++){
         for(int j=0; j<nStreets; j++) {
             delete map_in[i][j];
@@ -361,6 +358,21 @@ int main() {
     free(map_out);    
     delete s;
     delete t;
+}
+
+
+
+
+int main() {
+    createMap();
+    parseValues();
+    createEdges();
+    
+    cout << computeMaxFlow() << "\n";
+
+    // im a little sprout :)
+    cleanRuntime(); 
+    
 
     return 0;
 }
