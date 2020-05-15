@@ -1,6 +1,6 @@
 #!/bin/bash                      
-g++ -std=c++11 -O3 -Wall main.cpp -lm -o dfs.out> /dev/null 2>&1
-g++ -std=c++11 -O3 -Wall mainbfs.cpp -lm -o bfs.out> /dev/null 2>&1
+g++ -std=c++11 -O3 -Wall dfs.cpp -lm -o dfs.out> /dev/null 2>&1
+g++ -std=c++11 -O3 -Wall bfs.cpp -lm -o bfs.out> /dev/null 2>&1
 #-n -N min, max number of streets
 #-m -M min, max number of avenues
 #-S max number of shops
