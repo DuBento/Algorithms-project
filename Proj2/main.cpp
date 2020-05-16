@@ -22,7 +22,7 @@ public:
     vector<Vertex*> _children;
     Type _type = NORMAL;
     int _xPos, _yPos;
-    bool _visited;       // used in BFS
+    bool _visited;       // used in path search
 
     Vertex(int xPos, int yPos) : _xPos(xPos), _yPos(yPos) {}
 
@@ -47,15 +47,15 @@ public:
     }
 
 
-/*
-         3
-         |
-    1 -- V -- 2
-         |
-         4
-*/
 
     void auxFillEdges(Vertex*** map, Type type) {
+        /*
+                 3
+                 |
+            1 -- V -- 2
+                 |
+                 4
+        */
         if (_xPos > 0 && map[_xPos-1][_yPos]->getType() != type
             && map[_xPos-1][_yPos]->getType() != BLOCKED)
             _children.push_back(map[_xPos-1][_yPos]);
@@ -72,12 +72,10 @@ public:
 
 
     virtual void fillEdgesIn() {        // fill edges for vertices of type in
-        // cout << _xPos << ";" << _yPos << "\n";
         _children.push_back(map_out[_xPos][_yPos]);
     }
 
     virtual void fillEdgesOut() {       // fill edges for vertices of type out
-        // cout << _xPos << ";" << _yPos << "\n";
         auxFillEdges(map_in, CLIENT);
     }
 
@@ -88,7 +86,6 @@ public:
     void removeChild(Vertex *v) {
         for (long unsigned int i = 0; i < _children.size(); i++) 
             if (v == _children.at(i)) {
-                // cout << "No RemoveChild\t" << *_children.at(i) << "\n";
                 _children.erase(_children.begin()+i); 
                 return;
             }
@@ -227,7 +224,11 @@ void createEdges() {
     }
 }
 
-//debug
+
+// ===============================================
+// Debug
+// ===============================================
+
 void printChildren(Vertex*** map){
     cout << "CHILDREN" << "\n";
     // for source
@@ -248,7 +249,6 @@ void printChildren(Vertex*** map){
     
     for(int i = 0; i<nAvenues; i++)
         for(int j=0; j<nStreets; j++){
-            // cout << "---------- " << i << ";" << j << "\tsize" << map[i][j]->_children.size() <<'\n';
             unsigned sk = map[i][j]->_children.size();
             for(unsigned int k =0 ; k < sk; k++)
                 cout << i+1 << ";" << j+1 << "\t" << *(map[i][j]->_children[k]) << '\n';
@@ -273,6 +273,10 @@ void printPath(vector<Vertex*> path) {
 }
 
 
+
+// ===============================================
+//  Flow Algorithm
+// ===============================================
 
 void visit(Vertex* v, vector<Vertex*> *path, bool *endFound) {
     if (v == t) {
@@ -329,20 +333,16 @@ int computeMaxFlow() {
             }
             previous = current;
         } 
-        // for(Vertex* v : path) {
-        //     if (previous != NULL) {
-        //         previous->removeChild(v);
-        //         v->addChild(previous);
-        //     }
-        //     previous = v;
-        // }
         maxFlow++;
-        // path.erase(path.begin(), path.end());
         findPath(&path);
     }
 
     return maxFlow;
 }
+
+// ===============================================
+//  Cleaning
+// ===============================================
 
 void cleanRuntime() {
     for (int i=0; i<nAvenues; i++){
@@ -361,7 +361,9 @@ void cleanRuntime() {
 }
 
 
-
+// ===============================================
+//  Main
+// ===============================================
 
 int main() {
     createMap();
@@ -371,8 +373,6 @@ int main() {
     cout << computeMaxFlow() << "\n";
 
     // im a little sprout :)
-    cleanRuntime(); 
-    
-
+    cleanRuntime();
     return 0;
 }
