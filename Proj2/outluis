@@ -1,0 +1,66 @@
+
+============ TRIAL 0 ============
+TEST 1000
+TEST 1400
+TEST 1800
+TEST 2200
+TEST 2600
+TEST 3000
+TEST 3400
+TEST 3800
+TEST 4200
+TEST 4600
+100 | 10 | 962 | 900 | DfsVisits 20432 | BfsVisits 142254 | dfsTime 0.01 | bfsTime 0.01 | 
+100 | 14 | 900 | 1193 | DfsVisits 84345 | BfsVisits 378715 | dfsTime 0.01 | bfsTime 0.02 | 
+100 | 18 | 1531 | 900 | DfsVisits 6696 | BfsVisits 363026 | dfsTime 0.01 | bfsTime 0.02 | 
+100 | 22 | 900 | 1403 | DfsVisits 222763 | BfsVisits 1204149 | dfsTime 0.02 | bfsTime 0.03 | 
+100 | 26 | 1231 | 900 | DfsVisits 21413 | BfsVisits 1191344 | dfsTime 0.02 | bfsTime 0.03 | 
+100 | 30 | 900 | 1336 | DfsVisits 369900 | BfsVisits 2297890 | dfsTime 0.03 | bfsTime 0.07 | 
+100 | 34 | 2967 | 900 | DfsVisits 2548 | BfsVisits 570562 | dfsTime 0.02 | bfsTime 0.02 | 
+100 | 38 | 900 | 1831 | DfsVisits 519427 | BfsVisits 3343073 | dfsTime 0.04 | bfsTime 0.08 | 
+100 | 42 | 3307 | 900 | DfsVisits 2672 | BfsVisits 850163 | dfsTime 0.02 | bfsTime 0.03 | 
+100 | 46 | 900 | 1309 | DfsVisits 447486 | BfsVisits 4451153 | dfsTime 0.05 | bfsTime 0.11 | 
+
+============ TRIAL 1 ============
+TEST 10000
+TEST 14000
+TEST 18000
+TEST 22000
+TEST 26000
+TEST 30000
+TEST 34000
+TEST 38000
+TEST 42000
+TEST 46000
+100 | 100 | 9776 | 9000 | DfsVisits 1772714 | BfsVisits 12746200 | dfsTime 0.23 | bfsTime 0.64 | 
+100 | 140 | 9000 | 11350 | DfsVisits 7090831 | BfsVisits 42082262 | dfsTime 2.44 | bfsTime 2.29 | 
+100 | 180 | 13984 | 9000 | DfsVisits 1251041 | BfsVisits 44553072 | dfsTime 1.79 | bfsTime 4.07 | 
+100 | 220 | 9000 | 18274 | DfsVisits 22726862 | BfsVisits 104533616 | dfsTime 5.43 | bfsTime 5.08 | 
+100 | 260 | 11775 | 9000 | DfsVisits 1902377 | BfsVisits 129526005 | dfsTime 2.04 | bfsTime 7.79 | 
+100 | 300 | 9000 | 24256 | DfsVisits 36859246 | BfsVisits 166091801 | dfsTime 8.38 | bfsTime 9.43 | 
+100 | 340 | 9612 | 9000 | DfsVisits 7041871 | BfsVisits 242652141 | dfsTime 4.73 | bfsTime 15.56 | 
+100 | 380 | 9000 | 17672 | DfsVisits 47638301 | BfsVisits 318117118 | dfsTime 11.55 | bfsTime 18.68 | 
+100 | 420 | 23049 | 9000 | DfsVisits 142842 | BfsVisits 143406639 | dfsTime 4.51 | bfsTime 13.15 | 
+100 | 460 | 9000 | 23265 | DfsVisits 62751467 | BfsVisits 395611656 | dfsTime 14.02 | bfsTime 25.88 | 
+
+============ TRIAL 2 ============
+TEST 100000
+TEST 110000
+TEST 120000
+TEST 130000
+TEST 140000
+TEST 150000
+TEST 160000
+TEST 170000
+TEST 180000
+TEST 190000
+100 | 1000 | 96096 | 90000 | DfsVisits 173611638 | BfsVisits 1349493081 | dfsTime 128.78 | bfsTime 291.17 | 
+100 | 1100 | 90000 | 96953 | DfsVisits 305912539 | BfsVisits 2029660438 | dfsTime 177.71 | bfsTime 413.23 | 
+100 | 1200 | 96946 | 90000 | DfsVisits 266062448 | BfsVisits 2441106657 | dfsTime 187.86 | bfsTime 488.47 | 
+100 | 1300 | 90000 | 97599 | DfsVisits 472687238 | BfsVisits 3422691918 | dfsTime 241.12 | bfsTime 652.78 | 
+100 | 1400 | 139674 | 90000 | DfsVisits 94463278 | BfsVisits 2181259332 | dfsTime 150.97 | bfsTime 463.82 | 
+100 | 1500 | 90000 | 149384 | DfsVisits 967736155 | BfsVisits 4288872358 | dfsTime 336.84 | bfsTime 804.53 | 
+100 | 1600 | 93140 | 90000 | DfsVisits 523431925 | BfsVisits 5796382969 | dfsTime 276.75 | bfsTime 1079.62 | 
+100 | 1700 | 90000 | 126343 | DfsVisits 1255988050 | BfsVisits 6829959137 | dfsTime 415.82 | bfsTime 1232.61 | 
+100 | 1800 | 179499 | 90000 | DfsVisits 39333716 | BfsVisits 2848631888 | dfsTime 169.01 | bfsTime 601.53 | 
+100 | 1900 | 90000 | 143795 | DfsVisits 1667137373 | BfsVisits 8576484096 | dfsTime 511.89 | bfsTime 1497.89 | 
